@@ -296,8 +296,10 @@ class Joyride extends React.Component {
 
       if (status === STATUS.RUNNING && shouldScroll) {
         const hasCustomScroll = hasCustomScrollParent(target, disableScrollParentFix);
-        const scrollParent = getScrollParent(target, disableScrollParentFix);
-        let scrollY = Math.floor(getScrollTo(target, scrollOffset, disableScrollParentFix)) || 0;
+        var scrollParent = document.scrollingElement; // getScrollParent(target, disableScrollParentFix);
+        var targetRect = target.getBoundingClientRect();
+        var absoluteElementTop = targetRect.top + window.scrollY;
+        var scrollY = Math.floor(absoluteElementTop - (window.innerHeight / 2)); // Math.floor(getScrollTo(target, scrollOffset, disableScrollParentFix)) || 0;
 
         log({
           title: 'scrollToStep',
