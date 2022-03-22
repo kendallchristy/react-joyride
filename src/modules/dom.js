@@ -237,11 +237,34 @@ export function getElementPosition(element: HTMLElement, offset: number, skipFix
   let parentTop = 0;
 
   /* istanbul ignore else */
+
+  // This section contains the fork differences from react-joyride for the highlighting - KFC, 3/1/2022
   if (parent instanceof HTMLElement) {
-    parentTop = parent.scrollTop;
+    var windowScroll = window.scrollY
+    var parentScroll = parent.scrollTop
+    if (parentScroll >= windowScroll) {
+      parentTop = parent.scrollTop; // issue is that the parent is the actual content box hierarchically above the layout
+    }
+
+    else if (windowScroll > parentScroll) {
+      parentTop = window.scrollY
+    }
+  
+  else {
+    parentTop = window.scrollY;
+  }}
+
+  if (!hasScrollParent && !hasPosition(element)) { // has position returns false
+    var top = elementRect.top + parentTop;
   }
 
-  const top = elementRect.top + (!hasScrollParent && !hasPosition(element) ? parentTop : 0);
+  else if (parentTop > 0) {
+    var top = elementRect.top + parentTop;
+  }
+
+  else {
+    var top = elementRect.top;
+  }
 
   return Math.floor(top - offset);
 }
